@@ -248,7 +248,7 @@ function buildSigs(){
       (s.note?'<p class="sig-note">'+s.note+'</p>':'')+
       '<p class="sig-q">'+s.q+'</p>'+
       '<div class="opts">'+
-        s.opts.map(o=>'<button class="opt-btn" data-sig="'+s.id+'" onclick="pick(''+s.id+'','+o.s+',this)">'+o.t+'</button>').join('')+
+        s.opts.map(o =>   `<button class="opt-btn"       data-sig="${s.id}"       onclick="pick('${s.id}', ${o.s}, this)">       ${o.t}    </button>` ).join('')+
       '</div>';
     el.appendChild(d);
   });

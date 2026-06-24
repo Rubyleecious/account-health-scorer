@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free account health scoring tool by Rosemary Ruby Ogbonna — assess churn risk across 6 weighted signals before it shows up on the renewal call.">
+<meta property="og:title" content="Account Health Scorer — by Rosemary Ruby Ogbonna">
+<meta property="og:description" content="Score your accounts on 6 churn signals. Find the risk before it finds you.">
+<meta property="og:type" content="website">
+<title>Account Health Scorer · Rosemary Ruby Ogbonna</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#0A7C7C;
+  --teal-dark:#085858;
+  --teal-light:#E8F5F5;
+  --teal-mid:#C8EAEA;
+  --text-primary:#111827;
+  --text-secondary:#4B5563;
+  --text-tertiary:#9CA3AF;
+  --bg-page:#F9FAFB;
+  --bg-card:#FFFFFF;
+  --bg-secondary:#F3F4F6;
+  --border:#E5E7EB;
+  --border-light:#F0F0F0;
+  --green:#059669;
+  --green-bg:#ECFDF5;
+  --amber:#D97706;
+  --amber-bg:#FFFBEB;
+  --red:#DC2626;
+  --red-bg:#FEF2F2;
+  --radius-sm:8px;
+  --radius-md:12px;
+  --radius-lg:16px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{background:#fff;border-bottom:1px solid var(--border);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--teal)}
+.nav-name{font-size:14px;font-weight:500;color:var(--text-primary)}
+.nav-link{font-size:13px;color:var(--teal);text-decoration:none;display:flex;align-items:center;gap:4px;font-weight:500}
+.nav-link:hover{text-decoration:underline}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#064E4E 0%,#0A7C7C 60%,#0D9488 100%);padding:3.5rem 1.5rem 3rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-eyebrow{font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.6);text-transform:uppercase;margin-bottom:1rem}
+.hero h1{font-size:clamp(26px,5vw,40px);font-weight:600;color:#fff;line-height:1.2;margin-bottom:.875rem}
+.hero h1 span{color:#5DCAA5}
+.hero p{font-size:16px;color:rgba(255,255,255,.78);max-width:520px;margin:0 auto 1.75rem;line-height:1.65}
+.hero-stats{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat-num{font-size:22px;font-weight:600;color:#fff}
+.hero-stat-label{font-size:11px;color:rgba(255,255,255,.55);margin-top:2px}
+
+/* MAIN */
+main{max-width:680px;margin:0 auto;padding:2rem 1.25rem 4rem}
+
+/* SIGNAL CARD */
+.sig-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.25rem;margin-bottom:12px;transition:box-shadow .2s}
+.sig-card:focus-within{box-shadow:0 0 0 2px var(--teal-light)}
+.sig-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.sig-label{font-size:13px;font-weight:500;color:var(--teal)}
+.sig-weight{font-size:11px;background:var(--teal-light);color:var(--teal);padding:2px 9px;border-radius:999px}
+.sig-note{font-size:12px;color:var(--text-tertiary);font-style:italic;margin-bottom:8px}
+.sig-q{font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:12px;line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt-btn{text-align:left;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-primary);font-size:14px;cursor:pointer;width:100%;transition:background .15s,color .15s,border-color .15s;font-family:'Inter',sans-serif}
+.opt-btn:hover{background:var(--bg-secondary);border-color:#D1D5DB}
+.opt-btn.sel{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* PROGRESS */
+.prog-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem 1.25rem;margin-bottom:1.25rem}
+.prog-row{display:flex;justify-content:space-between;margin-bottom:8px}
+.prog-label{font-size:13px;color:var(--text-secondary)}
+.prog-pct{font-size:13px;font-weight:500;color:var(--teal)}
+.prog-bar-bg{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.prog-bar-fill{height:100%;width:0%;background:var(--teal);border-radius:2px;transition:width .35s ease}
+
+/* CTA BUTTON */
+.calc-btn{width:100%;padding:14px;border-radius:var(--radius-sm);background:var(--teal);color:#fff;border:none;font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s,opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.calc-btn:hover:not(:disabled){background:var(--teal-dark)}
+.calc-btn:disabled{opacity:.38;cursor:not-allowed}
+
+/* RESULTS */
+.result-card{border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:1.5rem}
+.result-hero{padding:1.5rem;display:flex;gap:1.25rem;align-items:center}
+.result-text{flex:1}
+.result-eyebrow{font-size:11px;letter-spacing:.08em;margin-bottom:4px;font-weight:500}
+.result-headline{font-size:15px;font-weight:500;color:var(--text-primary);line-height:1.45}
+.result-body{padding:1.25rem;border-top:1px solid var(--border)}
+.result-actions-label{font-size:11px;letter-spacing:.08em;font-weight:500;color:var(--text-tertiary);margin-bottom:12px;text-transform:uppercase}
+.result-actions{list-style:none;display:flex;flex-direction:column;gap:10px}
+.result-actions li{font-size:14px;line-height:1.65;color:var(--text-primary);display:flex;gap:10px;align-items:flex-start}
+.action-icon{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--teal-light);color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;margin-top:2px}
+.result-method{padding:1rem 1.25rem;border-top:1px solid var(--border);background:var(--bg-secondary)}
+.result-method p{font-size:12px;color:var(--text-secondary);line-height:1.65}
+.result-method strong{color:var(--teal)}
+.reset-btn{margin:1rem 1.25rem;padding:8px 18px;border-radius:var(--radius-sm);background:transparent;border:1px solid var(--border);font-size:14px;color:var(--text-secondary);cursor:pointer;font-family:'Inter',sans-serif}
+.reset-btn:hover{background:var(--bg-secondary)}
+
+/* INPUT */
+.input-wrap{margin-bottom:1.25rem}
+.input-label{font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px}
+.acct-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'Inter',sans-serif;color:var(--text-primary);background:var(--bg-card);outline:none}
+.acct-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-light)}
+
+/* FOOTER */
+footer{background:#fff;border-top:1px solid var(--border);padding:2rem 1.5rem;text-align:center}
+.footer-name{font-size:15px;font-weight:500;color:var(--text-primary);margin-bottom:4px}
+.footer-sub{font-size:13px;color:var(--text-secondary);margin-bottom:.875rem;line-height:1.6}
+.footer-link{display:inline-flex;align-items:center;gap:6px;background:var(--teal);color:#fff;text-decoration:none;padding:9px 20px;border-radius:var(--radius-sm);font-size:14px;font-weight:500}
+.footer-link:hover{background:var(--teal-dark)}
+.footer-copy{font-size:12px;color:var(--text-tertiary);margin-top:1.25rem}
+
+/* RING */
+.ring-wrap{flex-shrink:0;text-align:center}
+
+/* SECTION LABEL */
+.section-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-tertiary);font-weight:500;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+
+@media(max-width:480px){
+  .hero{padding:2.5rem 1.25rem 2rem}
+  .hero-stats{gap:1.25rem}
+  .result-hero{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-dot"></div>
+    <span class="nav-name">Rosemary Ruby Ogbonna</span>
+  </div>
+  <a class="nav-link" href="https://www.linkedin.com/in/rosemaryrubyo" target="_blank" rel="noopener">
+    LinkedIn <i class="ti ti-external-link" style="font-size:13px"></i>
+  </a>
+</nav>
+
+<div class="hero">
+  <p class="hero-eyebrow">Free account management tool</p>
+  <h1>Find the churn signal<br><span>before it finds you</span></h1>
+  <p>Score any account across 6 weighted risk signals — built on the methodology I used managing 350 live SaaS accounts.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">350</div>
+      <div class="hero-stat-label">Accounts tested on</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">92%</div>
+      <div class="hero-stat-label">Retention achieved</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">&lt;2%</div>
+      <div class="hero-stat-label">Monthly churn held</div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="prog-wrap">
+    <div class="prog-row">
+      <span class="prog-label" id="prog-text">0 of 6 signals assessed</span>
+      <span class="prog-pct" id="prog-pct">0%</span>
+    </div>
+    <div class="prog-bar-bg">
+      <div class="prog-bar-fill" id="prog-fill"></div>
+    </div>
+  </div>
+
+  <div class="input-wrap">
+    <label class="input-label" for="acct-name">Account name <span style="opacity:.6;font-size:12px">(optional)</span></label>
+    <input class="acct-input" type="text" id="acct-name" placeholder="e.g. Acme Corp">
+  </div>
+
+  <div class="section-label">Rate each signal</div>
+  <div id="sigs"></div>
+
+  <div style="margin:1.25rem 0">
+    <button class="calc-btn" id="calc-btn" onclick="doCalc()" disabled aria-label="Score this account">
+      <i class="ti ti-chart-bar" aria-hidden="true"></i>
+      Score this account
+    </button>
+  </div>
+
+  <div id="results"></div>
+</main>
+
+<footer>
+  <div class="footer-name">Rosemary Ruby Ogbonna</div>
+  <div class="footer-sub">
+    Google-Recognised Top 1% Account Manager (TestGorilla)<br>
+    92% retention · 350 accounts · Near-zero churn
+  </div>
+  <a class="footer-link" href="https://www.linkedin.com/in/rosemaryrubyo" target="_blank" rel="noopener">
+    <i class="ti ti-brand-linkedin" aria-hidden="true"></i>
+    Connect on LinkedIn
+  </a>
+  <div class="footer-copy">Built to share freely. Use it, share it, send it to your team.</div>
+</footer>
+
+<script>
+const SIGS=[
+  {id:'usage',w:.20,label:'Product usage',q:'How often is this account actively using the product?',
+    opts:[{t:'Active weekly',s:0},{t:'Using monthly',s:33},{t:'Occasional logins, low engagement',s:66},{t:'Not using at all',s:100}]},
+  {id:'convo',w:.20,label:'Last meaningful conversation',q:'When did you last have a real conversation — not just an email chain?',
+    opts:[{t:'This week',s:0},{t:'This month',s:33},{t:'1–2 months ago',s:66},{t:"I can't remember",s:100}]},
+  {id:'resp',w:.25,label:'Response when you reach out',q:'When you contact this account, how do they respond?',
+    note:'Carries the highest weight. Silence is the most misread churn signal.',
+    opts:[{t:'Same day',s:0},{t:'Within a few days',s:33},{t:'Over a week',s:66},{t:'Silence',s:100}]},
+  {id:'champ',w:.20,label:'Champion stability',q:'What is happening with your main contact at this account?',
+    opts:[{t:'Same champion, actively engaged',s:0},{t:'Same champion, less responsive lately',s:33},{t:'Contact has changed recently',s:66},{t:'Champion left — no clear replacement',s:100}]},
+  {id:'pay',w:.10,label:'Payment behaviour',q:'How are payments tracking for this account?',
+    opts:[{t:'Always on time',s:0},{t:'Occasionally late',s:50},{t:'Currently late or being chased',s:100}]},
+  {id:'pattern',w:.05,label:'Contact pattern',q:'What does their recent contact and support activity look like?',
+    opts:[{t:'Positive — fewer issues, good interactions',s:0},{t:'Stable — normal volume',s:33},{t:'Increasing complaints or frustration',s:66},{t:'Complete radio silence',s:100}]}
+];
+
+const RES={
+  green:{label:'Healthy',badge:'#059669',bg:'#ECFDF5',textColor:'#065F46',headline:'This account is in good shape. Stay consistent.',
+    actions:["Maintain your current cadence — don't over-touch healthy accounts.","Find the features they aren't using yet. That's your expansion conversation.","While the relationship is strong, ask for a testimonial or reference."]},
+  amber:{label:'Needs attention',badge:'#D97706',bg:'#FFFBEB',textColor:'#92400E',headline:'Something has shifted. Get in front of it this week.',
+    actions:["Don't email — call or send a WhatsApp. Low friction, personal, harder to ignore.","Ask 'What's changed on your end?' — not 'How are we doing?' One gets truth. One gets a polite lie.","Review your last 3 touchpoints. Were they real conversations or admin check-ins?","Check whether their internal champion has changed roles or gone quieter.","Prep a QBR focused on their goals, not your metrics."]},
+  red:{label:'At risk',badge:'#DC2626',bg:'#FEF2F2',textColor:'#991B1B',headline:'This is a same-week priority. Not a next-month priority.',
+    actions:['Ask for 5 minutes only. "Can we talk today? Just 5." Less friction than a calendar invite.','Ask "What's changed on your end?" — not an agenda, a real conversation.','Go above your usual contact if you need to. Now is the time.','Loop in your product or CS team — don't try to fix a product problem with a relationship conversation.','Start a save plan now. Not after the next missed payment.']}
+};
+
+const C=2*Math.PI*50;
+const resp={};
+
+function buildSigs(){
+  const el=document.getElementById('sigs');
+  SIGS.forEach(s=>{
+    const d=document.createElement('div');
+    d.className='sig-card';
+    d.innerHTML=
+      '<div class="sig-header">'+
+        '<span class="sig-label">'+s.label+'</span>'+
+        '<span class="sig-weight">'+Math.round(s.w*100)+'% weight</span>'+
+      '</div>'+
+      (s.note?'<p class="sig-note">'+s.note+'</p>':'')+
+      '<p class="sig-q">'+s.q+'</p>'+
+      '<div class="opts">'+
+        s.opts.map(o=>'<button class="opt-btn" data-sig="'+s.id+'" onclick="pick(''+s.id+'','+o.s+',this)">'+o.t+'</button>').join('')+
+      '</div>';
+    el.appendChild(d);
+  });
+}
+
+function pick(id,score,btn){
+  document.querySelectorAll('[data-sig="'+id+'"]').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  resp[id]=score;
+  const n=Object.keys(resp).length;
+  document.getElementById('prog-text').textContent=n+' of 6 signals assessed';
+  document.getElementById('prog-pct').textContent=Math.round(n/6*100)+'%';
+  document.getElementById('prog-fill').style.width=(n/6*100)+'%';
+  document.getElementById('calc-btn').disabled=n<6;
+}
+
+function doCalc(){
+  const raw=SIGS.reduce((t,s)=>t+resp[s.id]*s.w,0);
+  const sc=Math.round(raw);
+  const cls=sc<=25?'green':sc<=55?'amber':'red';
+  showRes(sc,cls);
+}
+
+function showRes(sc,cls){
+  const r=RES[cls];
+  const name=document.getElementById('acct-name').value||'this account';
+  const el=document.getElementById('results');
+  el.innerHTML=
+    '<div class="result-card">'+
+      '<div class="result-hero" style="background:'+r.bg+'">'+
+        '<div class="result-text">'+
+          '<p class="result-eyebrow" style="color:'+r.badge+'">Risk score — '+name+'</p>'+
+          '<p class="result-headline">'+r.headline+'</p>'+
+        '</div>'+
+        '<div class="ring-wrap">'+
+          '<svg width="100" height="100" viewBox="0 0 110 110" aria-label="Risk score: '+sc+' out of 100">'+
+            '<circle cx="55" cy="55" r="50" fill="none" stroke="#E5E7EB" stroke-width="7"/>'+
+            '<circle id="ring" cx="55" cy="55" r="50" fill="none" stroke="'+r.badge+'" stroke-width="7" stroke-linecap="round" transform="rotate(-90 55 55)" stroke-dasharray="0 '+C+'"/>'+
+            '<text id="snum" x="55" y="51" text-anchor="middle" dominant-baseline="middle" style="font-size:26px;font-weight:600;fill:'+r.badge+';font-family:Inter,sans-serif">0</text>'+
+            '<text x="55" y="69" text-anchor="middle" dominant-baseline="middle" style="font-size:9px;fill:#9CA3AF;font-family:Inter,sans-serif">/ 100</text>'+
+          '</svg>'+
+          '<div style="display:inline-block;background:'+r.badge+';color:#fff;font-size:11px;padding:3px 12px;border-radius:999px;font-weight:500;margin-top:-2px">'+r.label+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="result-body">'+
+        '<p class="result-actions-label">Recommended actions</p>'+
+        '<ul class="result-actions">'+
+          r.actions.map((a,i)=>'<li><div class="action-icon">'+(i+1)+'</div><span>'+a+'</span></li>').join('')+
+        '</ul>'+
+      '</div>'+
+      '<div class="result-method">'+
+        '<p><strong>How this is weighted:</strong> Response time carries 25% — silence is the most misread churn signal in account management. Usage, last meaningful conversation, and champion stability each carry 20%. Payment behaviour (10%) and contact pattern (5%) complete the picture. Built on Ruby's methodology managing 350 accounts at Diagnoxa AI.</p>'+
+      '</div>'+
+      '<button class="reset-btn" onclick="reset()">Score another account</button>'+
+    '</div>';
+
+  let cur=0;
+  const inc=sc/60;
+  const timer=setInterval(()=>{
+    cur+=inc;
+    if(cur>=sc){cur=sc;clearInterval(timer);}
+    const rnd=Math.round(cur);
+    const ringEl=document.getElementById('ring');
+    const snumEl=document.getElementById('snum');
+    if(ringEl&&snumEl){
+      snumEl.textContent=rnd;
+      ringEl.style.strokeDasharray=(rnd/100*C)+' '+C;
+    }
+  },20);
+
+  setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),150);
+}
+
+function reset(){
+  Object.keys(resp).forEach(k=>delete resp[k]);
+  document.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('prog-text').textContent='0 of 6 signals assessed';
+  document.getElementById('prog-pct').textContent='0%';
+  document.getElementById('prog-fill').style.width='0%';
+  document.getElementById('acct-name').value='';
+  document.getElementById('calc-btn').disabled=true;
+  document.getElementById('results').innerHTML='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+buildSigs();
+</script>
+</body>
+</html>
